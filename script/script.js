@@ -11,92 +11,140 @@ document.addEventListener('DOMContentLoaded', function(){
     const prevButton = document.querySelector('#prev')
     const sendButton = document.querySelector('#send')
 
-    const questions = [
-        {
-            question: "Какого цвета бургер?",
-            answers: [
-                {
-                    title: 'Стандарт',
-                    url: './image/burger.png'
-                },
-                {
-                    title: 'Черный',
-                    url: './image/burgerBlack.png'
-                }
-            ],
-            type: 'radio'
-        },
-        {
-            question: "Из какого мяса котлета?",
-            answers: [
-                {
-                    title: 'Курица',
-                    url: './image/chickenMeat.png'
-                },
-                {
-                    title: 'Говядина',
-                    url: './image/beefMeat.png'
-                },
-                {
-                    title: 'Свинина',
-                    url: './image/porkMeat.png'
-                }
-            ],
-            type: 'radio'
-        },
-        {
-            question: "Дополнительные ингредиенты?",
-            answers: [
-                {
-                    title: 'Помидор',
-                    url: './image/tomato.png'
-                },
-                {
-                    title: 'Огурец',
-                    url: './image/cucumber.png'
-                },
-                {
-                    title: 'Салат',
-                    url: './image/salad.png'
-                },
-                {
-                    title: 'Лук',
-                    url: './image/onion.png'
-                }
-            ],
-            type: 'checkbox'
-        },
-        {
-            question: "Добавить соус?",
-            answers: [
-                {
-                    title: 'Чесночный',
-                    url: './image/sauce1.png'
-                },
-                {
-                    title: 'Томатный',
-                    url: './image/sauce2.png'
-                },
-                {
-                    title: 'Горчичный',
-                    url: './image/sauce3.png'
-                }
-            ],
-            type: 'radio'
-        }
-    ];
+      //менять только это на своё(но можно и не менять ничего)
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyAwJN8QqmURxbc-64Pj1lW5BaAR5-Bw5yM",
+        authDomain: "burger-a4bd9.firebaseapp.com",
+        databaseURL: "https://burger-a4bd9-default-rtdb.firebaseio.com",
+        projectId: "burger-a4bd9",
+        storageBucket: "burger-a4bd9.appspot.com",
+        messagingSenderId: "834721378673",
+        appId: "1:834721378673:web:06564a00ee5d0e759306d0",
+        measurementId: "G-P1R2B1H7N6"
+      };
+      
+    //и до сюда
+    
+   firebase.initializeApp(firebaseConfig);
+
+
+    const getData = () => {
+
+        formAnswers.textContent = 'LOAD'
+
+        nextButton.classList.add('d-none')
+         prevButton.classList.add('d-none')
+         
+         setTimeout(() => {
+            firebase.database().ref().child('questions').once('value')
+            .then(snap => playTest(snap.val()))
+         },500)
+
+       
+
+        // setTimeout(
+        //     () => {
+        //          fetch('./questions.json') 
+        //          .then(res => res.json() )
+        //        .then(obj => playTest(obj.questions))
+        //        .catch(err =>{
+        //         formAnswers.textContent = 'Error loading'
+        //           console.error(err) 
+        //          })
+        //     },1000
+        // )
+        
+    }
+
+
+    // const questions = [
+    //     {
+    //         question: "Какого цвета бургер?",
+    //         answers: [
+    //             {
+    //                 title: 'Стандарт',
+    //                 url: './image/burger.png'
+    //             },
+    //             {
+    //                 title: 'Черный',
+    //                 url: './image/burgerBlack.png'
+    //             }
+    //         ],
+    //         type: 'radio'
+    //     },
+    //     {
+    //         question: "Из какого мяса котлета?",
+    //         answers: [
+    //             {
+    //                 title: 'Курица',
+    //                 url: './image/chickenMeat.png'
+    //             },
+    //             {
+    //                 title: 'Говядина',
+    //                 url: './image/beefMeat.png'
+    //             },
+    //             {
+    //                 title: 'Свинина',
+    //                 url: './image/porkMeat.png'
+    //             }
+    //         ],
+    //         type: 'radio'
+    //     },
+    //     {
+    //         question: "Дополнительные ингредиенты?",
+    //         answers: [
+    //             {
+    //                 title: 'Помидор',
+    //                 url: './image/tomato.png'
+    //             },
+    //             {
+    //                 title: 'Огурец',
+    //                 url: './image/cucumber.png'
+    //             },
+    //             {
+    //                 title: 'Салат',
+    //                 url: './image/salad.png'
+    //             },
+    //             {
+    //                 title: 'Лук',
+    //                 url: './image/onion.png'
+    //             }
+    //         ],
+    //         type: 'checkbox'
+    //     },
+    //     {
+    //         question: "Добавить соус?",
+    //         answers: [
+    //             {
+    //                 title: 'Чесночный',
+    //                 url: './image/sauce1.png'
+    //             },
+    //             {
+    //                 title: 'Томатный',
+    //                 url: './image/sauce2.png'
+    //             },
+    //             {
+    //                 title: 'Горчичный',
+    //                 url: './image/sauce3.png'
+    //             }
+    //         ],
+    //         type: 'radio'
+    //     }
+    // ];
 
 
     btnOpenModal.addEventListener('click',()=>{
-        console.log(modalBlock);
+        getData();
+        // console.log(modalBlock);
         modalBlock.classList.add('d-block')
-        playTest()
+        
     })
     closeModal.addEventListener('click', ()=>{
         modalBlock.classList.remove('d-block')
     })
 
-    const playTest = () =>  {
+    const playTest = (questions) =>  {
         const finalAnswers = [];
         let numberQuestion = 0;
 
@@ -125,11 +173,8 @@ document.addEventListener('DOMContentLoaded', function(){
             formAnswers.innerHTML = ``;
 
             if(numberQuestion >= 0 && numberQuestion <= questions.length -1 ){
-
             quetionTitle.textContent = `${questions[indexQuestion].question}`
-
             renderAnswers(indexQuestion);
-                
             nextButton.classList.remove('d-none');
             prevButton.classList.remove('d-none')
             sendButton.classList.add('d-none')
@@ -160,7 +205,10 @@ document.addEventListener('DOMContentLoaded', function(){
             //     },2000
             //     )
             // }
-            console.log(numberQuestion);
+            // if(numberQuestion === questions.length -1) {
+            //     nextButton.classList.add('d-none')
+            // }
+            // console.log(numberQuestion);
 
 
             
@@ -174,11 +222,9 @@ document.addEventListener('DOMContentLoaded', function(){
                 //     sendButton.classList.add('d-none')
                 //     break;
                 
-
                 case numberQuestion === 0:
                     prevButton.classList.add('d-none')
                 break;
-
 
                 case numberQuestion === questions.length:
                     nextButton.classList.add('d-none')
@@ -193,7 +239,6 @@ document.addEventListener('DOMContentLoaded', function(){
                     `
                 break;
 
-
                 case numberQuestion === questions.length + 1:
                     formAnswers.textContent = 'Спасибо за пройденный тест!'
                     setTimeout(
@@ -201,27 +246,11 @@ document.addEventListener('DOMContentLoaded', function(){
                         modalBlock.classList.remove('d-block')
                     },2000
                     )
-
-
                 break;
 
-
-
-
                 default:
-                    console.log('ERRROR');
+                    console.log(' ');
             }
-        
-
-
-
-              // if(numberQuestion === questions.length -1) {
-            //     nextButton.classList.add('d-none')
-            // }
-            
-
-            
-
         }
 
 
@@ -230,7 +259,7 @@ document.addEventListener('DOMContentLoaded', function(){
         const checkAnswer = ()  =>{
             const obj = {};
             const inputs = [...formAnswers.elements].filter((input) => input.checked || input.id === 'numberPhone')
-            console.log(inputs);
+            // console.log(inputs);
             inputs.forEach((input, index) => {
             //     if(numberQuestion >= 0 && numberQuestion <= questions.length -1){
             //     obj [`${index}_${questions[numberQuestion].question}`] = input.value
@@ -259,7 +288,6 @@ document.addEventListener('DOMContentLoaded', function(){
 
 
         // console.log(obj);
-
         finalAnswers.push(obj)
         // console.log(finalAnswers);
 
@@ -282,8 +310,12 @@ document.addEventListener('DOMContentLoaded', function(){
             
             numberQuestion++
             renderQuestions(numberQuestion);
-
-            console.log(finalAnswers);
+            firebase
+            .database()
+            .ref()
+            .child('contacts')
+            .push(finalAnswers)
+            // console.log(finalAnswers);
         }
 
     }
