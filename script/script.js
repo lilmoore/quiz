@@ -1,31 +1,90 @@
 document.addEventListener('DOMContentLoaded', function(){
     'use strict';
 
+    let i = 0
     const modalBlock = document.querySelector('#modalBlock')
     const btnOpenModal =document.querySelector('#btnOpenModal')
     const closeModal = document.querySelector('#closeModal')
     const quetionTitle = document.querySelector('#question')
     const formAnswers = document.querySelector('#formAnswers')
+    const nextButton = document.querySelector('#next')
+    const prevButton = document.querySelector('#prev')
 
-    const a = {
-        name:[
-            {
-                title:'Стандарт'
-            },
-            {
-                title:'Черный'
-            }
-    ]}
+    const questions = [
+        {
+            question: "Какого цвета бургер?",
+            answers: [
+                {
+                    title: 'Стандарт',
+                    url: './image/burger.png'
+                },
+                {
+                    title: 'Черный',
+                    url: './image/burgerBlack.png'
+                }
+            ],
+            type: 'radio'
+        },
+        {
+            question: "Из какого мяса котлета?",
+            answers: [
+                {
+                    title: 'Курица',
+                    url: './image/chickenMeat.png'
+                },
+                {
+                    title: 'Говядина',
+                    url: './image/beefMeat.png'
+                },
+                {
+                    title: 'Свинина',
+                    url: './image/porkMeat.png'
+                }
+            ],
+            type: 'radio'
+        },
+        {
+            question: "Дополнительные ингредиенты?",
+            answers: [
+                {
+                    title: 'Помидор',
+                    url: './image/tomato.png'
+                },
+                {
+                    title: 'Огурец',
+                    url: './image/cucumber.png'
+                },
+                {
+                    title: 'Салат',
+                    url: './image/salad.png'
+                },
+                {
+                    title: 'Лук',
+                    url: './image/onion.png'
+                }
+            ],
+            type: 'checkbox'
+        },
+        {
+            question: "Добавить соус?",
+            answers: [
+                {
+                    title: 'Чесночный',
+                    url: './image/sauce1.png'
+                },
+                {
+                    title: 'Томатный',
+                    url: './image/sauce2.png'
+                },
+                {
+                    title: 'Горчичный',
+                    url: './image/sauce3.png'
+                }
+            ],
+            type: 'radio'
+        }
+    ];
 
-    const b = {
-        link:[
-            {
-                url:'./image/burger.png'
-            },
-            {
-                url:'./image/burgerBlack.png'
-            }
-    ]}
 
     btnOpenModal.addEventListener('click',()=>{
         console.log(modalBlock);
@@ -36,30 +95,70 @@ document.addEventListener('DOMContentLoaded', function(){
         modalBlock.classList.remove('d-block')
     })
 
-    const playTest = ()=>{
-        const renderQuestions = ()=>{
-            quetionTitle.textContent = "Какого цвета бургер вы хотите?"
+    const playTest = () =>  {
+        let numberQuestion = 0;
+
+        const renderAnswers = (index) => {
+            questions[index].answers.forEach((answer)    =>  {
+                const answerItem= document.createElement('div');
+
+                answerItem.classList.add('answers-item', 'd-flex', 'flex-column');
+
+                answerItem.innerHTML = `
+                <input type="${questions[index].type}" id="${answer.title}" name="answer" class="d-none">
+                <label for="${answer.title}" class="d-flex flex-column justify-content-between">
+                <img class="answerImg" src="${answer.url}" alt="burger">
+                <span>${answer.title}</span>
+                </label>
+                </div>
+                `
+
+                formAnswers.appendChild(answerItem)
 
 
-            formAnswers.innerHTML = `<div class="answers-item d-flex flex-column">
-            <input type="radio" id="answerItem1" name="answer" class="d-none">
-            <label for="answerItem1" class="d-flex flex-column justify-content-between">
-            <img class="answerImg" src="${b.link[0].url}" alt="burger">
-            <span>${a.name[0].title}</span>
-            </label>
-        </div>
-        <div class="answers-item d-flex justify-content-center">
-            <input type="radio" id="answerItem2" name="answer" class="d-none">
-            <label for="answerItem2" class="d-flex flex-column justify-content-between">
-            <img class="answerImg" src="${b.link[1].url}" alt="burger">
-            <span>${a.name[1].title}</span>
-            </label>
-        </div>`
+            })
         }
-        renderQuestions();
+
+        const renderQuestions = (indexQuestion)=>{
+            formAnswers.innerHTML = ``;
+
+            if(numberQuestion >= 0 && numberQuestion <= questions.length -1 ){
+
+            quetionTitle.textContent = `${questions[indexQuestion].question}`
+
+            renderAnswers(indexQuestion);
+                
+            nextButton.classList.remove('d-none');
+            prevButton.classList.remove('d-none')
+            }
+
+            if(numberQuestion === 0) {
+                prevButton.classList.add('d-none')
+            }
+
+            if(numberQuestion === questions.length -1) {
+                nextButton.classList.add('d-none')
+            }
+
+            
+        }
+
+
+        renderQuestions(numberQuestion);
+
+        
+        nextButton.onclick = () => {
+            numberQuestion++
+            renderQuestions(numberQuestion);
+        }
+
+        prevButton.onclick = () => {
+            numberQuestion--
+            renderQuestions(numberQuestion);
+        }
+
     }
     
-
 })
 
 
@@ -119,5 +218,3 @@ document.addEventListener('DOMContentLoaded', function(){
 // console.log(summNumbers2(10, 8))
 // console.log(summNumbers2(3, 8))
 // console.log(summNumbers(2, 5))
-
-
